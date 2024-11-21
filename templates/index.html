@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Features Testing</title>
+    <!-- Preconnect to improve font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Importing Montserrat font with multiple weights -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        pre {
+        font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+        font-size: 1rem;
+        color: #333;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        }   
+
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: #4A90E2;
+            margin-bottom: 20px;
+            font-weight: 700; /* You can adjust this to any weight between 100 to 900 */
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        label {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 400; /* Regular weight */
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #4A90E2;
+            outline: none;
+        }
+
+        input[type="file"] {
+            font-size: 1rem;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        button {
+            background-color: #4A90E2;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            margin-right: 10px;
+            margin-top: 10px;
+            font-weight: 600; /* Semi-bold weight */
+        }
+
+        button:hover {
+            background-color: #357ABD;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .button-container button {
+            width: 48%;
+            margin-top: 10px;
+        }
+
+        .output, .content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        pre {
+            font-size: 1rem;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .output h2, .content h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600; /* Semi-bold weight */
+        }
+
+        /* Example of using a unique class with different weight */
+        .montserrat-unique-header {
+            font-weight: 700; /* Use any weight from 100 to 900 */
+        }
+
+        .montserrat-unique-body {
+            font-weight: 400; /* Regular weight for the body text */
+        }
+
+    </style>
+</head>
+<body>
+    <h1 class="montserrat-unique-header">GenAI Features Testing</h1>
+
+    <form action="/" method="post" enctype="multipart/form-data">
+        <div>
+            <label for="pasted_text" class="montserrat-unique-body">Paste Text:</label>
+            <textarea id="pasted_text" name="pasted_text" rows="10" cols="50" placeholder="Paste your text here..."></textarea>
+        </div>
+        <div>
+            <label for="file" class="montserrat-unique-body">Or Upload a File:</label>
+            <input type="file" name="file" accept=".pdf,.txt">
+        </div>
+        <div class="button-container">
+            <button type="submit" name="feature" value="summarize">Summarize</button>
+            <button type="submit" name="feature" value="feedback">Generate Feedback</button>
+            <button type="submit" name="feature" value="extract">Extract Sections</button>
+            <button type="submit" name="feature" value="questions">Generate Questions</button>
+        </div>
+    </form>
+
+    {% if output %}
+    <div class="output">
+        <h2 class="montserrat-unique-header">Output:</h2>
+        <pre>{{ output }}</pre>
+    </div>
+    {% endif %}
+
+    {% if content %}
+    <div class="content">
+        <h2 class="montserrat-unique-header">Original Content:</h2>
+        <pre>{{ content }}</pre>
+    </div>
+    {% endif %}
+</body>
+</html>
