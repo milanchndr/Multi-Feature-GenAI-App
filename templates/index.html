@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Features Testing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        /* Header Styling */
+        .montserrat-unique-header {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        /* Form and Textarea Styling */
+        form {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        textarea, input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
+            background: #fefefe;
+        }
+        textarea:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Buttons Styling */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .button-container button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+        }
+        button[type="button"] {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        /* Loader Styling */
+        .loader {
+            display: none;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Output and Content Boxes */
+        .output, .content {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .output h2, .content h2 {
+            color: #007bff;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        pre {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            background: #f9f9f9;
+            border: 1px solid #e1e1e1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin: 20px 0;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="montserrat-unique-header">GenAI Features Testing</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="pasted_text">Paste Text:</label>
+            <textarea name="pasted_text" id="pasted_text" placeholder="Type or paste your text here..."></textarea>
+        </div>
+
+        <div>
+            <label for="file">Or Upload a File:</label>
+            <input type="file" name="file" id="file" accept=".pdf,.txt">
+        </div>
+
+        <div class="button-container">
+            <button type="submit" name="feature" value="summarize">Summarize</button>
+            <button type="submit" name="feature" value="feedback">Generate Feedback</button>
+            <button type="submit" name="feature" value="extract">Extract Sections</button>
+            <button type="submit" name="feature" value="questions">Generate Questions</button>
+            <button type="button" onclick="checkPlagiarism('local')">Check Local Plagiarism</button>
+            <button type="button" onclick="checkPlagiarism('online')">Check Online Plagiarism</button>
+        </div>
+    </form>
+
+    <div class="loader">Processing... Please wait.</div>
+
+    <div id="plagiarism-results" class="output"></div>
+
+    {% if output %}
+    <div class="output">
+        <h2>Output</h2>
+        <pre>{{ output }}</pre>
+    </div>
+    {% endif %}
+
+    {% if content %}
+    <div class="content">
+        <h2>Original Content</h2>
+        <pre>{{ content }}</pre>
+    </div>
+    {% endif %}
+
+    <footer>&copy; 2024 GenAI Testing</footer>
+
+    <script>
+        function checkPlagiarism(type) {
+            const loader = document.querySelector('.loader');
+            const results = document.getElementById('plagiarism-results');
+            const formData = new FormData();
+            
+            formData.append('check_type', type);
+            
+            const fileInput = document.getElementById('file');
+            const textInput = document.getElementById('pasted_text');
+            
+            if (type === 'local' && textInput.value) {
+                // For local plagiarism with pasted text, create a temporary file
+                const blob = new Blob([textInput.value], { type: 'text/plain' });
+                formData.append('file', blob, 'pasted_text.txt');
+            } else if (fileInput.files && fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            } else if (textInput.value) {
+                formData.append('content', textInput.value);
+            } else {
+                alert('Please provide either text or a file to check');
+                return;
+            }
+            
+            loader.style.display = 'block';
+            results.style.display = 'none';
+            
+            fetch('/check_plagiarism', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loader.style.display = 'none';
+                results.style.display = 'block';
+                
+                if (type === 'local') {
+                    displayLocalResults(data.results);
+                } else {
+                    displayOnlineResults(data);
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                results.innerHTML = `Error: ${error.message}`;
+                results.style.display = 'block';
+            });
+        }
+
+        function displayLocalResults(results) {
+            const container = document.getElementById('plagiarism-results');
+            if (!results || results.length === 0) {
+                container.innerHTML = '<p>No significant matches found.</p>';
+                return;
+            }
+            
+            let html = '<h3>Local Plagiarism Results:</h3>';
+            results.forEach(result => {
+                html += `
+                    <div class="result-item">
+                        <p>Match with: ${result.file}</p>
+                        <p>Similarity: ${result.similarity}%</p>
+                        <h4>Matched Content:</h4>
+                        <ul>
+                            ${Array.isArray(result.matched_content) 
+                              ? result.matched_content.map(content => `<li>${content}</li>`).join('') 
+                              : '<li>No specific matches to display</li>'}
+                        </ul>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function displayOnlineResults(data) {
+            const container = document.getElementById('plagiarism-results');
+            if (data.error) {
+                container.innerHTML = `<p>Error: ${data.error}</p>`;
+                return;
+            }
+            container.innerHTML = `<h3>Online Plagiarism Score: ${data}%</h3>`;
+        }
+    </script>
+</body>
+</html>
