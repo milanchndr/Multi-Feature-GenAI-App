@@ -4,6 +4,7 @@ A Flask-based application that leverages Google Gemini AI to perform the followi
 - Automated Feedback
 - Content Extraction
 - Plagiarism Detection
+- Auto Grading
 - Question Generation
 
 ## Features
